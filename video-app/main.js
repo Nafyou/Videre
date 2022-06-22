@@ -2,9 +2,15 @@ import './style.css';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-
+// Firebase config key
 const firebaseConfig = {
-// add your own config
+  apiKey: "AIzaSyAbPs7io6ROI18JR1viiHKruTLunEmHETk",
+  authDomain: "video-app-one.firebaseapp.com",
+  projectId: "video-app-one",
+  storageBucket: "video-app-one.appspot.com",
+  messagingSenderId: "908062093414",
+  appId: "1:908062093414:web:3c5691c3cc81150f043da7",
+  measurementId: "G-6XGNN35FRB"
 };
 
 if (!firebase.apps.length){
@@ -31,7 +37,7 @@ let pc = new RTCPeerConnection(servers);
 let localStream = null;
 let remoteStream = null;
 
-// Use of imperative dom api's because we're using vanilla javascript
+// Prototyping with vanilla JS so get every element we want access to
 const webcamButton = document.getElementById('webcamButton');
 const webcamVideo = document.getElementById('webcamVideo');
 const callButton = document.getElementById('callButton');
@@ -41,7 +47,6 @@ const remoteVideo = document.getElementById('remoteVideo');
 const hangupButton = document.getElementById('hangupButton');
 
 // Setup media sources
-
 // Obtain webcam stream by bringing dialogue to host
 webcamButton.onclick = async () => {
   localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
@@ -65,6 +70,7 @@ webcamButton.onclick = async () => {
   remoteVideo.srcObject = remoteStream;
 
 
+  
   callButton.disabled = false;
   answerButton.disabled = false;
   webcamButton.disabled = true;
@@ -94,7 +100,7 @@ callButton.onclick = async () => {
   // set LocalDescription automatically started generating ice candidates
   await pc.setLocalDescription(offerDescription);
 
-  // Note: SDP contains information about codec, etc
+  // Note: SDP(session description protocol) contains information about codec, etc
   const offer = {
     sdp: offerDescription.sdp,
     type: offerDescription.type,
@@ -161,7 +167,7 @@ answerButton.onclick = async () => {
       if (change.type === 'added') {
         let data = change.doc.data();
         pc.addIceCandidate(new RTCIceCandidate(data));
-      }
+      };
     });
   });
 };
