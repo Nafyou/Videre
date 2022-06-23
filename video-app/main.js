@@ -46,7 +46,7 @@ const answerButton = document.getElementById('answerButton');
 const remoteVideo = document.getElementById('remoteVideo');
 const hangupButton = document.getElementById('hangupButton');
 
-// Setup media sources
+// Step 1: Setup media sources
 // Obtain webcam stream by bringing dialogue to host
 webcamButton.onclick = async () => {
   localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
@@ -158,7 +158,7 @@ answerButton.onclick = async () => {
     type: answerDescription.type,
     sdp: answerDescription.sdp,
   };
-
+  await console.log({answer});
   await callDoc.update({ answer });
 
   offerCandidates.onSnapshot((snapshot) => {
