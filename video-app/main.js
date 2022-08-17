@@ -4,9 +4,14 @@ import 'firebase/compat/firestore';
 
 
 const firebaseConfig = {
-// add your own config
+  apiKey: "AIzaSyAS6E45hUgz2IwUlBd0DjiVvY3PGLMSNu0",
+  authDomain: "video-app-65006.firebaseapp.com",
+  projectId: "video-app-65006",
+  storageBucket: "video-app-65006.appspot.com",
+  messagingSenderId: "489538067018",
+  appId: "1:489538067018:web:63d5a8110d95981bee64b3",
+  measurementId: "G-VFE44RSQSH"
 };
-
 if (!firebase.apps.length){
   firebase.initializeApp(firebaseConfig)
 }
@@ -39,12 +44,20 @@ const callInput = document.getElementById('callInput');
 const answerButton = document.getElementById('answerButton');
 const remoteVideo = document.getElementById('remoteVideo');
 const hangupButton = document.getElementById('hangupButton');
-
+let localFPS = document.getElementById('local_fps');
+let remoteFPS = document.getElementById('remote_fps');
 // Setup media sources
 
 // Obtain webcam stream by bringing dialogue to host
 webcamButton.onclick = async () => {
   localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+
+  // Obtain Local Frame Rate
+  let localFrameRate = localStream.getVideoTracks()[0].getSettings().frameRate
+  console.log(localFrameRate);
+  if (localFrameRate){
+  localFPS.innerHTML = "Local FPS: " + localFrameRate;
+  }
 
   remoteStream = new MediaStream();
 
@@ -58,13 +71,21 @@ webcamButton.onclick = async () => {
     event.streams[0].getTracks().forEach((track) => {
       remoteStream.addTrack(track);
     });
+ 
   };
-
   // Applies the streams to video objects in the source DOM
   webcamVideo.srcObject = localStream;
   remoteVideo.srcObject = remoteStream;
 
-
+  remoteVideo.onloadedmetadata = () => {
+    console.log(remoteStream);
+    let remoteFrameRate = remoteStream.getVideoTracks()[0].getSettings().frameRate;
+    remoteFPS.innerHTML = "Remote FPS: " + remoteFrameRate;
+  }
+  // let remoteFrameRate = remoteStream.getVideoTracks()[0].getSettings().frameRate
+  // if(remoteFrameRate){
+  //   remoteFPS.innerHTML = "Remote Frame Rate: " +remoteFrameRate;
+  // }
   callButton.disabled = false;
   answerButton.disabled = false;
   webcamButton.disabled = true;
