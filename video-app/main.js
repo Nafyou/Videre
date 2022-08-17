@@ -2,7 +2,7 @@ import './style.css';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-
+// Firebase config key
 const firebaseConfig = {
   apiKey: "AIzaSyAS6E45hUgz2IwUlBd0DjiVvY3PGLMSNu0",
   authDomain: "video-app-65006.firebaseapp.com",
@@ -18,6 +18,7 @@ if (!firebase.apps.length){
 
 const firestore = firebase.firestore(); 
 
+// Publicly available STUN servers from google
 const servers = {
   iceServers: [
     {
@@ -36,7 +37,7 @@ let pc = new RTCPeerConnection(servers);
 let localStream = null;
 let remoteStream = null;
 
-// Use of imperative dom api's because we're using vanilla javascript
+// Obtain access to all DOM elements
 const webcamButton = document.getElementById('webcamButton');
 const webcamVideo = document.getElementById('webcamVideo');
 const callButton = document.getElementById('callButton');
@@ -46,7 +47,6 @@ const remoteVideo = document.getElementById('remoteVideo');
 const hangupButton = document.getElementById('hangupButton');
 let localFPS = document.getElementById('local_fps');
 let remoteFPS = document.getElementById('remote_fps');
-// Setup media sources
 
 // Obtain webcam stream by bringing dialogue to host
 webcamButton.onclick = async () => {
@@ -77,15 +77,13 @@ webcamButton.onclick = async () => {
   webcamVideo.srcObject = localStream;
   remoteVideo.srcObject = remoteStream;
 
+  // Display remote FPS
   remoteVideo.onloadedmetadata = () => {
     console.log(remoteStream);
     let remoteFrameRate = remoteStream.getVideoTracks()[0].getSettings().frameRate;
     remoteFPS.innerHTML = "Remote FPS: " + remoteFrameRate;
   }
-  // let remoteFrameRate = remoteStream.getVideoTracks()[0].getSettings().frameRate
-  // if(remoteFrameRate){
-  //   remoteFPS.innerHTML = "Remote Frame Rate: " +remoteFrameRate;
-  // }
+
   callButton.disabled = false;
   answerButton.disabled = false;
   webcamButton.disabled = true;
@@ -115,7 +113,7 @@ callButton.onclick = async () => {
   // set LocalDescription automatically started generating ice candidates
   await pc.setLocalDescription(offerDescription);
 
-  // Note: SDP contains information about codec, etc
+  // Note: SDP(session description protocol) contains information about codec, etc
   const offer = {
     sdp: offerDescription.sdp,
     type: offerDescription.type,
@@ -173,7 +171,7 @@ answerButton.onclick = async () => {
     type: answerDescription.type,
     sdp: answerDescription.sdp,
   };
-
+  await console.log({answer});
   await callDoc.update({ answer });
 
   offerCandidates.onSnapshot((snapshot) => {
@@ -182,7 +180,7 @@ answerButton.onclick = async () => {
       if (change.type === 'added') {
         let data = change.doc.data();
         pc.addIceCandidate(new RTCIceCandidate(data));
-      }
+      };
     });
   });
 };
